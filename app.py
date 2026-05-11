@@ -240,4 +240,18 @@ st.subheader("Ιστορικό Εβδομαδιαίων QC Ελέγχων")
 sheet = connect_to_gsheet()
 records = sheet.get_all_records()
 df = pd.DataFrame(records)
+
+st.metric("Total QC Submissions", len(df))
+
+pass_count = len(df[df["Final Result"] == "PASS"])
+fail_count = len(df[df["Final Result"] == "FAIL"])
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric("PASS", pass_count)
+
+with col2:
+    st.metric("FAIL", fail_count)
+
 st.dataframe(df, use_container_width=True)

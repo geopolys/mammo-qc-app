@@ -241,17 +241,21 @@ sheet = connect_to_gsheet()
 records = sheet.get_all_records()
 df = pd.DataFrame(records)
 
-st.metric("Total QC Submissions", len(df))
+if df.empty:
+    st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
 
-pass_count = len(df[df["Final Result"] == "PASS"])
-fail_count = len(df[df["Final Result"] == "FAIL"])
+else:
+    st.metric("Total QC Submissions", len(df))
 
-col1, col2 = st.columns(2)
+    pass_count = len(df[df["Final Result"] == "PASS"])
+    fail_count = len(df[df["Final Result"] == "FAIL"])
 
-with col1:
-    st.metric("PASS", pass_count)
+    col1, col2 = st.columns(2)
 
-with col2:
-    st.metric("FAIL", fail_count)
+    with col1:
+        st.metric("PASS", pass_count)
 
-st.dataframe(df, use_container_width=True)
+    with col2:
+        st.metric("FAIL", fail_count)
+
+    st.dataframe(df, use_container_width=True)

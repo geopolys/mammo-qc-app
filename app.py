@@ -2,6 +2,25 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 import os
+import gspread
+from google.oauth2.service_account import Credentials
+
+SPREADSHEET_ID = "11itCZA6RkbPY3jBSC2MZyDc4qb2k5g_gn1B0djm4o48"
+
+def connect_to_gsheet():
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+
+    credentials = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=scopes
+    )
+
+    client = gspread.authorize(credentials)
+    sheet = client.open_by_key(SPREADSHEET_ID).sheet1
+    return sheet
 
 st.set_page_config(page_title="Weekly Mammography QC", layout="wide")
 
@@ -205,9 +224,8 @@ if submitted:
         "Final Result": final_result
     }])
 
-    df = pd.read_excel(DB_FILE)
-    df = pd.concat([df, new_row], ignore_index=True)
-    df.to_excel(DB_FILE, index=False)
+    sheet = connect_to_gsheet()
+    sheet.append_row(list(new_row.iloc[0].astype(str)))
 
     if final_result == "PASS":
         st.success("Ο εβδομαδιαίος έλεγχος καταχωρήθηκε επιτυχώς: PASS")
@@ -219,5 +237,7 @@ st.divider()
 
 st.subheader("Ιστορικό Εβδομαδιαίων QC Ελέγχων")
 
-df = pd.read_excel(DB_FILE)
+sheet = connect_to_gsheet()
+records = sheet.get_all_records()
+df = pd.DataFrame(records)
 st.dataframe(df, use_container_width=True)

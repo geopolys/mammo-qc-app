@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from datetime import date
-import os
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -24,8 +23,6 @@ def connect_to_gsheet():
 
 st.set_page_config(page_title="Weekly Mammography QC", layout="wide")
 
-DB_FILE = "qc_database.xlsx"
-
 st.title("Πρωτόκολλο Εβδομαδιαίου Ποιοτικού Ελέγχου Ψηφιακής Μαστογραφίας")
 
 centres = [
@@ -35,32 +32,6 @@ centres = [
     "Κέντρο Μαστογραφίας Αμμοχώστου - Κ.Υ. Αμμοχώστου",
     "Κέντρο Μαστογραφίας Γεροσκήπου - Ιατρικό Κέντρο Γεροσκήπου"
 ]
-
-columns = [
-    "Date", "Centre", "Radiographer",
-
-    "Detector Flat Field Calibration",
-
-    "Artifact Rh kV", "Artifact Rh mAs", "Artifact Rh Result",
-    "Artifact Ag kV", "Artifact Ag mAs", "Artifact Ag Result",
-    "Artifact Al kV", "Artifact Al mAs", "Artifact Al Result",
-
-    "2D kV", "2D mAs", "2D AGD",
-    "2D Fibers", "2D Specs", "2D Mass",
-    "2D Artifact", "2D Result",
-
-    "DBT kV", "DBT mAs", "DBT AGD",
-    "DBT Fibers", "DBT Specs", "DBT Mass",
-    "DBT Artifact", "DBT Result",
-
-    "2D SNR", "DBT SNR", "SNR Result",
-
-    "Comments", "Final Result"
-]
-
-if not os.path.exists(DB_FILE):
-    df = pd.DataFrame(columns=columns)
-    df.to_excel(DB_FILE, index=False)
 
 with st.form("weekly_qc_form"):
 
@@ -73,6 +44,7 @@ with st.form("weekly_qc_form"):
     st.divider()
 
     st.subheader("Detector Flat Field Calibration")
+
     detector_ffc = st.selectbox(
         "Εκτελέστηκε η διαδικασία επιτυχώς;",
         ["ΝΑΙ", "ΟΧΙ"]
@@ -118,8 +90,6 @@ with st.form("weekly_qc_form"):
         specs_2d = st.number_input("2D Specs group score", min_value=0.0, step=0.5)
         mass_2d = st.number_input("2D Mass score", min_value=0.0, step=0.5)
 
-        
-
     with coldbt:
         st.markdown("### Image Modality: DBT")
         kv_dbt = st.number_input("DBT kV", min_value=0.0, step=0.1)
@@ -130,22 +100,15 @@ with st.form("weekly_qc_form"):
         specs_dbt = st.number_input("DBT Specs group score", min_value=0.0, step=0.5)
         mass_dbt = st.number_input("DBT Mass score", min_value=0.0, step=0.5)
 
-        
-
     st.info("Όρια: 2D Fibers ≥ 5, Specs ≥ 4, Mass ≥ 4 | DBT Fibers ≥ 4, Specs ≥ 4, Mass ≥ 4")
 
     st.divider()
 
-    st.subheader("Signal-To-Noise Ratio & Contrast-to-Noise Ratio")
+    st.subheader("Signal-To-Noise Ratio")
 
-    colsnr1, colsnr2 = st.columns(2)
+    snr_2d = st.number_input("2D SNR", min_value=0.0, step=0.1)
 
-    with colsnr1:
-        snr_2d = st.number_input("2D SNR", min_value=0.0, step=0.1)
-
-    
-
-    st.info("Όριο: SNR > = 40")
+    st.info("Όριο: SNR ≥ 40")
 
     st.divider()
 
@@ -166,15 +129,15 @@ if submitted:
     if rh_result == "ΟΧΙ" or ag_result == "ΟΧΙ" or al_result == "ΟΧΙ":
         final_result = "FAIL"
 
-    if fibers_2d < 5 or specs_2d < 4 or mass_2d < 4 or artifact_2d == "ΝΑΙ":
+    if fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
         result_2d = "FAIL"
         final_result = "FAIL"
 
-    if fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4 or artifact_dbt == "ΝΑΙ":
+    if fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
         result_dbt = "FAIL"
         final_result = "FAIL"
 
-    if snr_2d < 40 
+    if snr_2d < 40:
         snr_result = "FAIL"
         final_result = "FAIL"
 
@@ -203,7 +166,6 @@ if submitted:
         "2D Fibers": fibers_2d,
         "2D Specs": specs_2d,
         "2D Mass": mass_2d,
-        "2D Artifact": artifact_2d,
         "2D Result": result_2d,
 
         "DBT kV": kv_dbt,
@@ -212,7 +174,6 @@ if submitted:
         "DBT Fibers": fibers_dbt,
         "DBT Specs": specs_dbt,
         "DBT Mass": mass_dbt,
-        "DBT Artifact": artifact_dbt,
         "DBT Result": result_dbt,
 
         "2D SNR": snr_2d,
@@ -229,7 +190,7 @@ if submitted:
         st.success("Ο εβδομαδιαίος έλεγχος καταχωρήθηκε επιτυχώς: PASS")
     else:
         st.error("Ο εβδομαδιαίος έλεγχος καταχωρήθηκε: FAIL")
-        st.warning("Σύμφωνα με το πρωτόκολλο, σε περίπτωση ελέγχου εκτός ορίων πρέπει να ειδοποιείται ο/η υπεύθυνος/η ιατροφυσικός.")
+        st.warning("Σύμφωνα με το πρωτόκολλο, σε περίπτωση ελέγχου εκτός ορίων πρέπει να ειδοποιείται ο/η υπεύθυνος/η Ιατροφυσικός.")
 
 st.divider()
 
@@ -239,7 +200,7 @@ sheet = connect_to_gsheet()
 records = sheet.get_all_records()
 df = pd.DataFrame(records)
 
-if df.empty:
+if df.empty or "Final Result" not in df.columns:
     st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
 
 else:

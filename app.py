@@ -90,6 +90,11 @@ with st.form("weekly_qc_form"):
         specs_2d = st.number_input("2D Specs group score", min_value=0.0, step=0.5)
         mass_2d = st.number_input("2D Mass score", min_value=0.0, step=0.5)
 
+        if fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
+            st.error("2D Image Quality: FAIL")
+        else:
+            st.success("2D Image Quality: PASS")
+
     with coldbt:
         st.markdown("### Image Modality: DBT")
         kv_dbt = st.number_input("DBT kV", min_value=0.0, step=0.1)
@@ -100,6 +105,11 @@ with st.form("weekly_qc_form"):
         specs_dbt = st.number_input("DBT Specs group score", min_value=0.0, step=0.5)
         mass_dbt = st.number_input("DBT Mass score", min_value=0.0, step=0.5)
 
+        if fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
+            st.error("DBT Image Quality: FAIL")
+        else:
+            st.success("DBT Image Quality: PASS")
+
     st.info("Όρια: 2D Fibers ≥ 5, Specs ≥ 4, Mass ≥ 4 | DBT Fibers ≥ 4, Specs ≥ 4, Mass ≥ 4")
 
     st.divider()
@@ -109,6 +119,11 @@ with st.form("weekly_qc_form"):
     snr_2d = st.number_input("2D SNR", min_value=0.0, step=0.1)
 
     st.info("Όριο: SNR ≥ 40")
+
+    if snr_2d < 40:
+        st.error("SNR: FAIL")
+    else:
+        st.success("SNR: PASS")
 
     st.divider()
 
@@ -182,44 +197,7 @@ if submitted:
         "Comments": comments,
         "Final Result": final_result
     }])
-preview_2d = "PASS"
-preview_dbt = "PASS"
-preview_snr = "PASS"
-preview_final = "PASS"
 
-if fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
-    preview_2d = "FAIL"
-    preview_final = "FAIL"
-
-if fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
-    preview_dbt = "FAIL"
-    preview_final = "FAIL"
-
-if snr_2d < 40:
-    preview_snr = "FAIL"
-    preview_final = "FAIL"
-
-if detector_ffc == "ΟΧΙ":
-    preview_final = "FAIL"
-
-if rh_result == "ΟΧΙ" or ag_result == "ΟΧΙ" or al_result == "ΟΧΙ":
-    preview_final = "FAIL"
-
-st.subheader("Προεπισκόπηση Αποτελεσμάτων")
-
-colp1, colp2, colp3, colp4 = st.columns(4)
-
-with colp1:
-    st.metric("2D Image Quality", preview_2d)
-
-with colp2:
-    st.metric("DBT Image Quality", preview_dbt)
-
-with colp3:
-    st.metric("SNR", preview_snr)
-
-with colp4:
-    st.metric("Final Result", preview_final)
     sheet = connect_to_gsheet()
     sheet.append_row(list(new_row.iloc[0].astype(str)))
 

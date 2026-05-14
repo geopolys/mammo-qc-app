@@ -82,6 +82,7 @@ with st.form("weekly_qc_form"):
 
     with col2d:
         st.markdown("### Image Modality: 2D")
+
         kv_2d = st.number_input("2D kV", min_value=0.0, step=0.1)
         mas_2d = st.number_input("2D mAs", min_value=0.0, step=0.1)
         agd_2d = st.number_input("2D AGD", min_value=0.0, step=0.01)
@@ -90,13 +91,18 @@ with st.form("weekly_qc_form"):
         specs_2d = st.number_input("2D Specs group score", min_value=0.0, step=0.5)
         mass_2d = st.number_input("2D Mass score", min_value=0.0, step=0.5)
 
-        if fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
+        if fibers_2d == 0 and specs_2d == 0 and mass_2d == 0:
+            st.info("2D Image Quality: Pending")
+
+        elif fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
             st.error("2D Image Quality: FAIL")
+
         else:
             st.success("2D Image Quality: PASS")
 
     with coldbt:
         st.markdown("### Image Modality: DBT")
+
         kv_dbt = st.number_input("DBT kV", min_value=0.0, step=0.1)
         mas_dbt = st.number_input("DBT mAs", min_value=0.0, step=0.1)
         agd_dbt = st.number_input("DBT AGD", min_value=0.0, step=0.01)
@@ -105,8 +111,12 @@ with st.form("weekly_qc_form"):
         specs_dbt = st.number_input("DBT Specs group score", min_value=0.0, step=0.5)
         mass_dbt = st.number_input("DBT Mass score", min_value=0.0, step=0.5)
 
-        if fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
+        if fibers_dbt == 0 and specs_dbt == 0 and mass_dbt == 0:
+            st.info("DBT Image Quality: Pending")
+
+        elif fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
             st.error("DBT Image Quality: FAIL")
+
         else:
             st.success("DBT Image Quality: PASS")
 
@@ -120,8 +130,12 @@ with st.form("weekly_qc_form"):
 
     st.info("Όριο: SNR ≥ 40")
 
-    if snr_2d < 40:
+    if snr_2d == 0:
+        st.info("SNR: Pending")
+
+    elif snr_2d < 40:
         st.error("SNR: FAIL")
+
     else:
         st.success("SNR: PASS")
 
@@ -217,7 +231,9 @@ df = pd.DataFrame(records)
 
 if df.empty or "Final Result" not in df.columns:
     st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
+
 else:
+
     valid_df = df[
         (df["Radiographer"] != "") &
         (df["2D Fibers"].astype(str) != "0") &

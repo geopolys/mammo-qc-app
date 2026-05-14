@@ -217,9 +217,7 @@ df = pd.DataFrame(records)
 
 if df.empty or "Final Result" not in df.columns:
     st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
-
 else:
-
     valid_df = df[
         (df["Radiographer"] != "") &
         (df["2D Fibers"].astype(str) != "0") &
@@ -230,6 +228,7 @@ else:
 
     pass_count = len(valid_df[valid_df["Final Result"] == "PASS"])
     fail_count = len(valid_df[valid_df["Final Result"] == "FAIL"])
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -238,19 +237,19 @@ else:
     with col2:
         st.metric("FAIL", fail_count)
 
-  display_columns = [
-    "Date",
-    "Centre",
-    "Radiographer",
-    "2D Result",
-    "DBT Result",
-    "SNR Result",
-    "Final Result"
-]
+    display_columns = [
+        "Date",
+        "Centre",
+        "Radiographer",
+        "2D Result",
+        "DBT Result",
+        "SNR Result",
+        "Final Result"
+    ]
 
-available_columns = [col for col in display_columns if col in df.columns]
+    available_columns = [col for col in display_columns if col in df.columns]
 
-st.dataframe(
-    valid_df[available_columns],
-    use_container_width=True
-)
+    st.dataframe(
+        valid_df[available_columns],
+        use_container_width=True
+    )

@@ -219,11 +219,17 @@ if df.empty or "Final Result" not in df.columns:
     st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
 
 else:
-    st.metric("Total QC Submissions", len(df))
 
-    pass_count = len(df[df["Final Result"] == "PASS"])
-    fail_count = len(df[df["Final Result"] == "FAIL"])
+    valid_df = df[
+        (df["Radiographer"] != "") &
+        (df["2D Fibers"].astype(str) != "0") &
+        (df["DBT Fibers"].astype(str) != "0")
+    ]
 
+    st.metric("Total QC Submissions", len(valid_df))
+
+    pass_count = len(valid_df[valid_df["Final Result"] == "PASS"])
+    fail_count = len(valid_df[valid_df["Final Result"] == "FAIL"])
     col1, col2 = st.columns(2)
 
     with col1:
@@ -232,4 +238,19 @@ else:
     with col2:
         st.metric("FAIL", fail_count)
 
-    st.dataframe(df, use_container_width=True)
+  display_columns = [
+    "Date",
+    "Centre",
+    "Radiographer",
+    "2D Result",
+    "DBT Result",
+    "SNR Result",
+    "Final Result"
+]
+
+available_columns = [col for col in display_columns if col in df.columns]
+
+st.dataframe(
+    valid_df[available_columns],
+    use_container_width=True
+)

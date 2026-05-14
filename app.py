@@ -91,7 +91,7 @@ with st.form("weekly_qc_form"):
         specs_2d = st.number_input("2D Specs group score", min_value=0.0, step=0.5)
         mass_2d = st.number_input("2D Mass score", min_value=0.0, step=0.5)
 
-        if fibers_2d == 0 and specs_2d == 0 and mass_2d == 0:
+        if fibers_2d <= 0 and specs_2d <= 0 and mass_2d <= 0:
             st.info("2D Image Quality: Pending")
 
         elif fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
@@ -111,7 +111,7 @@ with st.form("weekly_qc_form"):
         specs_dbt = st.number_input("DBT Specs group score", min_value=0.0, step=0.5)
         mass_dbt = st.number_input("DBT Mass score", min_value=0.0, step=0.5)
 
-        if fibers_dbt == 0 and specs_dbt == 0 and mass_dbt == 0:
+        if fibers_dbt <= 0 and specs_dbt <= 0 and mass_dbt <= 0:
             st.info("DBT Image Quality: Pending")
 
         elif fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:

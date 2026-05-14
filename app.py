@@ -118,7 +118,7 @@ with st.form("weekly_qc_form"):
         specs_2d = st.number_input("2D Specs group score", min_value=0.0, step=0.5)
         mass_2d = st.number_input("2D Mass score", min_value=0.0, step=0.5)
 
-        artifact_2d = st.selectbox("2D Artifact;", ["ΟΧΙ", "ΝΑΙ"])
+        
 
     with coldbt:
         st.markdown("### Image Modality: DBT")
@@ -130,7 +130,7 @@ with st.form("weekly_qc_form"):
         specs_dbt = st.number_input("DBT Specs group score", min_value=0.0, step=0.5)
         mass_dbt = st.number_input("DBT Mass score", min_value=0.0, step=0.5)
 
-        artifact_dbt = st.selectbox("DBT Artifact;", ["ΟΧΙ", "ΝΑΙ"])
+        
 
     st.info("Όρια: 2D Fibers ≥ 5, Specs ≥ 4, Mass ≥ 4 | DBT Fibers ≥ 4, Specs ≥ 4, Mass ≥ 4")
 
@@ -143,10 +143,9 @@ with st.form("weekly_qc_form"):
     with colsnr1:
         snr_2d = st.number_input("2D SNR", min_value=0.0, step=0.1)
 
-    with colsnr2:
-        snr_dbt = st.number_input("DBT SNR", min_value=0.0, step=0.1)
+    
 
-    st.info("Όριο: SNR > 40")
+    st.info("Όριο: SNR > = 40")
 
     st.divider()
 
@@ -175,7 +174,7 @@ if submitted:
         result_dbt = "FAIL"
         final_result = "FAIL"
 
-    if snr_2d <= 40 or snr_dbt <= 40:
+    if snr_2d < 40 
         snr_result = "FAIL"
         final_result = "FAIL"
 
@@ -217,7 +216,6 @@ if submitted:
         "DBT Result": result_dbt,
 
         "2D SNR": snr_2d,
-        "DBT SNR": snr_dbt,
         "SNR Result": snr_result,
 
         "Comments": comments,

@@ -74,7 +74,7 @@ with st.form("weekly_qc_form"):
 
     st.subheader("Detector Flat Field Calibration")
     detector_ffc = st.selectbox(
-        "Διαδικασία επιτυχής;",
+        "Εκτελέστηκε η διαδικασία επιτυχώς;",
         ["ΝΑΙ", "ΟΧΙ"]
     )
 

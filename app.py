@@ -182,7 +182,44 @@ if submitted:
         "Comments": comments,
         "Final Result": final_result
     }])
+preview_2d = "PASS"
+preview_dbt = "PASS"
+preview_snr = "PASS"
+preview_final = "PASS"
 
+if fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
+    preview_2d = "FAIL"
+    preview_final = "FAIL"
+
+if fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
+    preview_dbt = "FAIL"
+    preview_final = "FAIL"
+
+if snr_2d < 40:
+    preview_snr = "FAIL"
+    preview_final = "FAIL"
+
+if detector_ffc == "ΟΧΙ":
+    preview_final = "FAIL"
+
+if rh_result == "ΟΧΙ" or ag_result == "ΟΧΙ" or al_result == "ΟΧΙ":
+    preview_final = "FAIL"
+
+st.subheader("Προεπισκόπηση Αποτελεσμάτων")
+
+colp1, colp2, colp3, colp4 = st.columns(4)
+
+with colp1:
+    st.metric("2D Image Quality", preview_2d)
+
+with colp2:
+    st.metric("DBT Image Quality", preview_dbt)
+
+with colp3:
+    st.metric("SNR", preview_snr)
+
+with colp4:
+    st.metric("Final Result", preview_final)
     sheet = connect_to_gsheet()
     sheet.append_row(list(new_row.iloc[0].astype(str)))
 

@@ -237,7 +237,6 @@ if show_history:
         st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
 
     else:
-
         valid_df = df[
             (df["Radiographer"] != "") &
             (df["2D Fibers"].astype(str) != "0") &
@@ -268,14 +267,15 @@ if show_history:
         ]
 
         available_columns = [col for col in display_columns if col in df.columns]
-st.dataframe(
+
+        st.dataframe(
             valid_df[available_columns],
             use_container_width=True
         )
 
-csv = valid_df.to_csv(index=False).encode("utf-8-sig")
+        csv = valid_df.to_csv(index=False).encode("utf-8-sig")
 
-st.download_button(
+        st.download_button(
             label="Download QC Report CSV",
             data=csv,
             file_name="weekly_mammography_qc_report.csv",

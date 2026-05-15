@@ -221,51 +221,55 @@ if submitted:
         st.error("Ο εβδομαδιαίος έλεγχος καταχωρήθηκε: FAIL")
         st.warning("Σύμφωνα με το πρωτόκολλο, σε περίπτωση ελέγχου εκτός ορίων πρέπει να ειδοποιείται ο/η υπεύθυνος/η Ιατροφυσικός.")
 
-st.divider()
+show_history = st.checkbox("Supervisor View")
 
-st.subheader("Ιστορικό Εβδομαδιαίων QC Ελέγχων")
+if show_history:
 
-sheet = connect_to_gsheet()
-records = sheet.get_all_records()
-df = pd.DataFrame(records)
+    st.divider()
 
-if df.empty or "Final Result" not in df.columns:
-    st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
+    st.subheader("Ιστορικό Εβδομαδιαίων QC Ελέγχων")
 
-else:
+    sheet = connect_to_gsheet()
+    records = sheet.get_all_records()
+    df = pd.DataFrame(records)
 
-    valid_df = df[
-        (df["Radiographer"] != "") &
-        (df["2D Fibers"].astype(str) != "0") &
-        (df["DBT Fibers"].astype(str) != "0")
-    ]
+    if df.empty or "Final Result" not in df.columns:
+        st.info("Δεν υπάρχουν ακόμα καταχωρημένοι εβδομαδιαίοι QC έλεγχοι.")
 
-    st.metric("Total QC Submissions", len(valid_df))
+    else:
 
-    pass_count = len(valid_df[valid_df["Final Result"] == "PASS"])
-    fail_count = len(valid_df[valid_df["Final Result"] == "FAIL"])
+        valid_df = df[
+            (df["Radiographer"] != "") &
+            (df["2D Fibers"].astype(str) != "0") &
+            (df["DBT Fibers"].astype(str) != "0")
+        ]
 
-    col1, col2 = st.columns(2)
+        st.metric("Total QC Submissions", len(valid_df))
 
-    with col1:
-        st.metric("PASS", pass_count)
+        pass_count = len(valid_df[valid_df["Final Result"] == "PASS"])
+        fail_count = len(valid_df[valid_df["Final Result"] == "FAIL"])
 
-    with col2:
-        st.metric("FAIL", fail_count)
+        col1, col2 = st.columns(2)
 
-    display_columns = [
-        "Date",
-        "Centre",
-        "Radiographer",
-        "2D Result",
-        "DBT Result",
-        "SNR Result",
-        "Final Result"
-    ]
+        with col1:
+            st.metric("PASS", pass_count)
 
-    available_columns = [col for col in display_columns if col in df.columns]
+        with col2:
+            st.metric("FAIL", fail_count)
 
-    st.dataframe(
-        valid_df[available_columns],
-        use_container_width=True
-    )
+        display_columns = [
+            "Date",
+            "Centre",
+            "Radiographer",
+            "2D Result",
+            "DBT Result",
+            "SNR Result",
+            "Final Result"
+        ]
+
+        available_columns = [col for col in display_columns if col in df.columns]
+
+        st.dataframe(
+            valid_df[available_columns],
+            use_container_width=True
+        )

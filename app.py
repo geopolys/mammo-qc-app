@@ -33,117 +33,117 @@ centres = [
     "Κέντρο Μαστογραφίας Γεροσκήπου - Ιατρικό Κέντρο Γεροσκήπου"
 ]
 
-with st.form("weekly_qc_form"):
+st.subheader("Στοιχεία Ελέγχου")
 
-    st.subheader("Στοιχεία Ελέγχου")
+qc_date = st.date_input("Ημερομηνία", value=date.today())
+centre = st.selectbox("Κέντρο / Νοσοκομείο", centres)
+radiographer = st.text_input("Ακτινογράφος")
 
-    qc_date = st.date_input("Ημερομηνία", value=date.today())
-    centre = st.selectbox("Κέντρο / Νοσοκομείο", centres)
-    radiographer = st.text_input("Ακτινογράφος")
+st.divider()
 
-    st.divider()
+st.subheader("Detector Flat Field Calibration")
 
-    st.subheader("Detector Flat Field Calibration")
+detector_ffc = st.selectbox(
+    "Εκτελέστηκε η διαδικασία επιτυχώς;",
+    ["ΝΑΙ", "ΟΧΙ"]
+)
 
-    detector_ffc = st.selectbox(
-        "Εκτελέστηκε η διαδικασία επιτυχώς;",
-        ["ΝΑΙ", "ΟΧΙ"]
-    )
+st.divider()
 
-    st.divider()
+st.subheader("Artifact Evaluation")
 
-    st.subheader("Artifact Evaluation")
+col1, col2, col3 = st.columns(3)
 
-    col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown("### Rh")
+    rh_kv = st.number_input("Rh kV", min_value=0.0, step=0.1)
+    rh_mas = st.number_input("Rh mAs", min_value=0.0, step=0.1)
+    rh_result = st.selectbox("Rh Έλεγχος επιτυχής;", ["ΝΑΙ", "ΟΧΙ"])
 
-    with col1:
-        st.markdown("### Rh")
-        rh_kv = st.number_input("Rh kV", min_value=0.0, step=0.1)
-        rh_mas = st.number_input("Rh mAs", min_value=0.0, step=0.1)
-        rh_result = st.selectbox("Rh Έλεγχος επιτυχής;", ["ΝΑΙ", "ΟΧΙ"])
+with col2:
+    st.markdown("### Ag")
+    ag_kv = st.number_input("Ag kV", min_value=0.0, step=0.1)
+    ag_mas = st.number_input("Ag mAs", min_value=0.0, step=0.1)
+    ag_result = st.selectbox("Ag Έλεγχος επιτυχής;", ["ΝΑΙ", "ΟΧΙ"])
 
-    with col2:
-        st.markdown("### Ag")
-        ag_kv = st.number_input("Ag kV", min_value=0.0, step=0.1)
-        ag_mas = st.number_input("Ag mAs", min_value=0.0, step=0.1)
-        ag_result = st.selectbox("Ag Έλεγχος επιτυχής;", ["ΝΑΙ", "ΟΧΙ"])
+with col3:
+    st.markdown("### Al")
+    al_kv = st.number_input("Al kV", min_value=0.0, step=0.1)
+    al_mas = st.number_input("Al mAs", min_value=0.0, step=0.1)
+    al_result = st.selectbox("Al Έλεγχος επιτυχής;", ["ΝΑΙ", "ΟΧΙ"])
 
-    with col3:
-        st.markdown("### Al")
-        al_kv = st.number_input("Al kV", min_value=0.0, step=0.1)
-        al_mas = st.number_input("Al mAs", min_value=0.0, step=0.1)
-        al_result = st.selectbox("Al Έλεγχος επιτυχής;", ["ΝΑΙ", "ΟΧΙ"])
+st.divider()
 
-    st.divider()
+st.subheader("Image Quality - ACR Phantom")
 
-    st.subheader("Image Quality - ACR Phantom")
+col2d, coldbt = st.columns(2)
 
-    col2d, coldbt = st.columns(2)
+with col2d:
 
-    with col2d:
-        st.markdown("### Image Modality: 2D")
+    st.markdown("### Image Modality: 2D")
 
-        kv_2d = st.number_input("2D kV", min_value=0.0, step=0.1)
-        mas_2d = st.number_input("2D mAs", min_value=0.0, step=0.1)
-        agd_2d = st.number_input("2D AGD", min_value=0.0, step=0.01)
+    kv_2d = st.number_input("2D kV", min_value=0.0, step=0.1)
+    mas_2d = st.number_input("2D mAs", min_value=0.0, step=0.1)
+    agd_2d = st.number_input("2D AGD", min_value=0.0, step=0.01)
 
-        fibers_2d = st.number_input("2D Fibers score", min_value=0.0, step=0.5)
-        specs_2d = st.number_input("2D Specs group score", min_value=0.0, step=0.5)
-        mass_2d = st.number_input("2D Mass score", min_value=0.0, step=0.5)
+    fibers_2d = st.number_input("2D Fibers score", min_value=0.0, step=0.5)
+    specs_2d = st.number_input("2D Specs group score", min_value=0.0, step=0.5)
+    mass_2d = st.number_input("2D Mass score", min_value=0.0, step=0.5)
 
-        if fibers_2d == 0 and specs_2d == 0 and mass_2d == 0:
-            st.info("2D Image Quality: Pending")
+    if fibers_2d == 0 and specs_2d == 0 and mass_2d == 0:
+        st.info("2D Image Quality: Pending")
 
-        elif fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
-            st.error("2D Image Quality: FAIL")
-
-        else:
-            st.success("2D Image Quality: PASS")
-
-    with coldbt:
-        st.markdown("### Image Modality: DBT")
-
-        kv_dbt = st.number_input("DBT kV", min_value=0.0, step=0.1)
-        mas_dbt = st.number_input("DBT mAs", min_value=0.0, step=0.1)
-        agd_dbt = st.number_input("DBT AGD", min_value=0.0, step=0.01)
-
-        fibers_dbt = st.number_input("DBT Fibers score", min_value=0.0, step=0.5)
-        specs_dbt = st.number_input("DBT Specs group score", min_value=0.0, step=0.5)
-        mass_dbt = st.number_input("DBT Mass score", min_value=0.0, step=0.5)
-
-        if fibers_dbt == 0 and specs_dbt == 0 and mass_dbt == 0:
-            st.info("DBT Image Quality: Pending")
-
-        elif fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
-            st.error("DBT Image Quality: FAIL")
-
-        else:
-            st.success("DBT Image Quality: PASS")
-
-    st.info("Όρια: 2D Fibers ≥ 5, Specs ≥ 4, Mass ≥ 4 | DBT Fibers ≥ 4, Specs ≥ 4, Mass ≥ 4")
-
-    st.divider()
-
-    st.subheader("Signal-To-Noise Ratio")
-
-    snr_2d = st.number_input("2D SNR", min_value=0.0, step=0.1)
-
-    st.info("Όριο: SNR ≥ 40")
-
-    if snr_2d == 0:
-        st.info("SNR: Pending")
-
-    elif snr_2d < 40:
-        st.error("SNR: FAIL")
+    elif fibers_2d < 5 or specs_2d < 4 or mass_2d < 4:
+        st.error("2D Image Quality: FAIL")
 
     else:
-        st.success("SNR: PASS")
+        st.success("2D Image Quality: PASS")
 
-    st.divider()
+with coldbt:
 
-    comments = st.text_area("Παρατηρήσεις")
+    st.markdown("### Image Modality: DBT")
 
-    submitted = st.form_submit_button("Υποβολή Εβδομαδιαίου QC")
+    kv_dbt = st.number_input("DBT kV", min_value=0.0, step=0.1)
+    mas_dbt = st.number_input("DBT mAs", min_value=0.0, step=0.1)
+    agd_dbt = st.number_input("DBT AGD", min_value=0.0, step=0.01)
+
+    fibers_dbt = st.number_input("DBT Fibers score", min_value=0.0, step=0.5)
+    specs_dbt = st.number_input("DBT Specs group score", min_value=0.0, step=0.5)
+    mass_dbt = st.number_input("DBT Mass score", min_value=0.0, step=0.5)
+
+    if fibers_dbt == 0 and specs_dbt == 0 and mass_dbt == 0:
+        st.info("DBT Image Quality: Pending")
+
+    elif fibers_dbt < 4 or specs_dbt < 4 or mass_dbt < 4:
+        st.error("DBT Image Quality: FAIL")
+
+    else:
+        st.success("DBT Image Quality: PASS")
+
+st.info("Όρια: 2D Fibers ≥ 5, Specs ≥ 4, Mass ≥ 4 | DBT Fibers ≥ 4, Specs ≥ 4, Mass ≥ 4")
+
+st.divider()
+
+st.subheader("Signal-To-Noise Ratio")
+
+snr_2d = st.number_input("2D SNR", min_value=0.0, step=0.1)
+
+st.info("Όριο: SNR ≥ 40")
+
+if snr_2d == 0:
+    st.info("SNR: Pending")
+
+elif snr_2d < 40:
+    st.error("SNR: FAIL")
+
+else:
+    st.success("SNR: PASS")
+
+st.divider()
+
+comments = st.text_area("Παρατηρήσεις")
+
+submitted = st.button("Υποβολή Εβδομαδιαίου QC")
 
 if submitted:
 
